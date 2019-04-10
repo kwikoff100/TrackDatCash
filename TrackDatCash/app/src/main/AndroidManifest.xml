@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ViewExpensesActivity"></activity>
+        <activity android:name=".BasicPieActivity"></activity>
+        <activity android:name=".GroupViewActivity" />
+        <activity android:name=".FilterViewActivity" />
+        <activity android:name=".ViewExpensesActivity" />
         <activity android:name=".AddExpenseActivity" />
         <activity android:name=".MainMenuActivity" />
         <activity android:name=".RegisterActivity" />

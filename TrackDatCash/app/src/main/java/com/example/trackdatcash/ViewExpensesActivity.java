@@ -27,6 +27,10 @@ public class ViewExpensesActivity extends AppCompatActivity {
         Button btnRtoMMfVE = (Button) findViewById(R.id.btnRtoMMfVE);
         Button filter = (Button) findViewById(R.id.btnFilterExpenses);
 
+        //Pull the url from the activity change intent
+        Bundle bundle = getIntent().getExtras();
+        String urlToUse = bundle.getString("url");
+
         //Call table create function upon activity create
         initViews();
 
@@ -41,13 +45,8 @@ public class ViewExpensesActivity extends AppCompatActivity {
         filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
-                //Either send to a new page with filtering options
-                //OR
-                //A drop down with options (also requires a Click Listener)
-
-                //Intent todoIntent = new Intent(ViewExpensesActivity.this, MainMenuActivity.class);
-                //ViewExpensesActivity.this.startActivity(todoIntent);
+                Intent todoIntent = new Intent(ViewExpensesActivity.this, FilterViewActivity.class);
+                ViewExpensesActivity.this.startActivity(todoIntent);
             }
         });
     }
