@@ -1,0 +1,110 @@
+package com.example.trackdatcash;
+
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+
+import java.util.ArrayList;
+
+public class BasicPieActivity extends AppCompatActivity {
+
+    private static String TAG = "BasicPieActivity";
+    private int[] tempVals = {22, 33, 44, 55};
+    private String[] catArray = {"Food", "Bills", "Entertainment", "Other/Misc."};
+    PieChart pieChart;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_basic_pie);
+        Log.d(TAG, "OnCreate");
+
+        pieChart = (PieChart) findViewById(R.id.chPieChart);
+
+        //Add things to the pie chart
+        //pieChart.setDescription("Total spent per category");
+
+        pieChart.setRotationEnabled(true);
+        pieChart.setHoleRadius(25f);
+        pieChart.setTransparentCircleAlpha(0);
+        pieChart.setCenterText("Total Spending");
+        pieChart.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
+
+        //pieChart.setCenterTextTypeface(typeface);
+        pieChart.setDrawEntryLabels(true);
+
+        addDataSet(pieChart);
+
+        pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                //Find the selected slice and output the found value to screen using Toast
+
+                //Log.e(TAG, e.toString());
+                //Log.e(TAG, h.toString());
+                int pos1 = h.toString().indexOf("x: ");
+                int pos2 = h.toString().indexOf(".",pos1);
+                String cat = h.toString().substring(pos1+3, pos2);
+                String catType = catArray[Integer.parseInt(cat)];
+                Integer val = tempVals[Integer.parseInt(cat)];
+
+                Toast.makeText(BasicPieActivity.this, catType+"\nTotal $"+val.toString(),Toast.LENGTH_LONG).show();
+
+            }
+
+            @Override
+            public void onNothingSelected() {
+
+            }
+        });
+    }
+
+    private void addDataSet(PieChart pieChart) {
+        ArrayList<PieEntry> totals = new ArrayList<>();
+        ArrayList<String> catNames = new ArrayList<>();
+
+        //Add the values to the arrays used in data set
+        for (int i = 0; i<tempVals.length; i++)
+        {
+            totals.add(new PieEntry(tempVals[i], i));
+            catNames.add(catArray[i]);
+        }
+
+        //Data set creation
+        PieDataSet pieDataSet = new PieDataSet(totals, "Categories");
+        pieDataSet.setSliceSpace(2);
+        pieDataSet.setValueTextSize(12);
+
+        //Adding colors
+        ArrayList<Integer> colors = new ArrayList<>();
+        colors.add(Color.RED);
+        colors.add(Color.BLUE);
+        colors.add(Color.YELLOW);
+        colors.add(Color.GREEN);
+
+        pieDataSet.setColors(colors);
+
+        //Create a legend
+        Legend legend = pieChart.getLegend();
+        legend.setForm(Legend.LegendForm.CIRCLE);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+
+        //Create the object
+        PieData pieData = new PieData(pieDataSet);
+        pieChart.setData(pieData);
+        pieChart.invalidate();
+
+    }
+}
