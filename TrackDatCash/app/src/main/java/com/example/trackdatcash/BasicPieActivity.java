@@ -1,10 +1,13 @@
 package com.example.trackdatcash;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
@@ -31,16 +34,21 @@ public class BasicPieActivity extends AppCompatActivity {
         setContentView(R.layout.activity_basic_pie);
         Log.d(TAG, "OnCreate");
 
+        Button btnRtoMMfVP = (Button) findViewById(R.id.btnRtoMMfVP);
+        Button btnFilterPie = (Button) findViewById(R.id.btnFilterPie);
+
         pieChart = (PieChart) findViewById(R.id.chPieChart);
 
         //Add things to the pie chart
         //pieChart.setDescription("Total spent per category");
 
         pieChart.setRotationEnabled(true);
-        pieChart.setHoleRadius(25f);
+        pieChart.setHoleRadius(30f);
         pieChart.setTransparentCircleAlpha(0);
         pieChart.setCenterText("Total Spending");
+        pieChart.setCenterTextSize(10);
         pieChart.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
+        pieChart.getDescription().setText("Spending per Category");
 
         //pieChart.setCenterTextTypeface(typeface);
         pieChart.setDrawEntryLabels(true);
@@ -69,6 +77,24 @@ public class BasicPieActivity extends AppCompatActivity {
 
             }
         });
+
+        //Return to the Main Menu
+        btnRtoMMfVP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent todoIntent = new Intent(BasicPieActivity.this, MainMenuActivity.class);
+                BasicPieActivity.this.startActivity(todoIntent);
+            }
+        });
+
+        //Go to the filter activity to choose what data goes in the pie chart
+        btnFilterPie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Intent todoIntent = new Intent(BasicPieActivity.this, MainMenuActivity.class);
+                //BasicPieActivity.this.startActivity(todoIntent);
+            }
+        });
     }
 
     private void addDataSet(PieChart pieChart) {
@@ -89,10 +115,10 @@ public class BasicPieActivity extends AppCompatActivity {
 
         //Adding colors
         ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(Color.RED);
-        colors.add(Color.BLUE);
-        colors.add(Color.YELLOW);
-        colors.add(Color.GREEN);
+        colors.add(getResources().getColor(R.color.colorPie1));
+        colors.add(getResources().getColor(R.color.colorPie2));
+        colors.add(getResources().getColor(R.color.colorPie3));
+        colors.add(getResources().getColor(R.color.colorPie4));
 
         pieDataSet.setColors(colors);
 

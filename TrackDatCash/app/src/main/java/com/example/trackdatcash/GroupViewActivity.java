@@ -17,6 +17,7 @@ public class GroupViewActivity extends AppCompatActivity {
         Button btnRtoMMfGV = (Button) findViewById(R.id.btnRtoMMfGV);
         Button btnGroupViewGV = (Button) findViewById(R.id.btnGroupViewGV);
 
+        //Return to the Main Menu
         btnRtoMMfGV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

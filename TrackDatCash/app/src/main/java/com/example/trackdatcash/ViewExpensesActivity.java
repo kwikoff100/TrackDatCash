@@ -34,6 +34,7 @@ public class ViewExpensesActivity extends AppCompatActivity {
         //Call table create function upon activity create
         initViews();
 
+        //Return to the Main Menu
         btnRtoMMfVE.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
