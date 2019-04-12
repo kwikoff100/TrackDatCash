@@ -12,12 +12,14 @@ import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 
@@ -53,7 +55,22 @@ public class BasicPieActivity extends AppCompatActivity {
         //pieChart.setCenterTextTypeface(typeface);
         pieChart.setDrawEntryLabels(true);
 
-        addDataSet(pieChart);
+        //Pull the url from the activity change intent
+        Bundle bundle = getIntent().getExtras();
+        String urlToUse = bundle.getString("url");
+
+
+        if (urlToUse.equals("NoChange"))
+        {
+            //No change to the table
+        }
+        else
+        {
+            //Create the pie chart with the new data
+            addDataSet(pieChart);
+        }
+
+
 
         pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
@@ -91,8 +108,8 @@ public class BasicPieActivity extends AppCompatActivity {
         btnFilterPie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent todoIntent = new Intent(BasicPieActivity.this, MainMenuActivity.class);
-                //BasicPieActivity.this.startActivity(todoIntent);
+                Intent todoIntent = new Intent(BasicPieActivity.this, PieFilterActivity.class);
+                BasicPieActivity.this.startActivity(todoIntent);
             }
         });
     }
@@ -113,6 +130,7 @@ public class BasicPieActivity extends AppCompatActivity {
         pieDataSet.setSliceSpace(2);
         pieDataSet.setValueTextSize(12);
 
+
         //Adding colors
         ArrayList<Integer> colors = new ArrayList<>();
         colors.add(getResources().getColor(R.color.colorPie1));
@@ -126,6 +144,19 @@ public class BasicPieActivity extends AppCompatActivity {
         Legend legend = pieChart.getLegend();
         legend.setForm(Legend.LegendForm.CIRCLE);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        legend.setTextColor(getResources().getColor(R.color.colorPie5));
+
+        LegendEntry[] legendEntry = new LegendEntry[tempVals.length];
+
+        for (int i = 0; i<tempVals.length; i++)
+        {
+            LegendEntry entry = new LegendEntry();
+            entry.formColor = colors.get(i);
+            entry.label = String.valueOf(catArray[i]);
+            legendEntry[i] = entry;
+        }
+
+        legend.setCustom(legendEntry);
 
         //Create the object
         PieData pieData = new PieData(pieDataSet);

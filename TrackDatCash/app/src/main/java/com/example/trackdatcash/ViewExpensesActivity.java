@@ -31,8 +31,16 @@ public class ViewExpensesActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         String urlToUse = bundle.getString("url");
 
-        //Call table create function upon activity create
-        initViews();
+        if (urlToUse.equals("NoChange"))
+        {
+            //No change to the table
+        }
+        else
+        {
+            //Call table create function upon activity create
+            initViews();
+        }
+
 
         //Return to the Main Menu
         btnRtoMMfVE.setOnClickListener(new View.OnClickListener() {

@@ -23,6 +23,7 @@ public class FilterViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_filter_view);
 
         Button btnFilterFilter = (Button) findViewById(R.id.btnFilterFilter);
+        Button btnRtoVEfFE = (Button) findViewById(R.id.btnRtoVEfFE);
 
         addToPrimarySpinner();
         addToSecondarySpinner(2);
@@ -49,6 +50,21 @@ public class FilterViewActivity extends AppCompatActivity {
 
             }
         });
+
+        btnRtoVEfFE.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //No change to data
+                String urlToSend = "NoChange";
+
+                //Using the selected value, create route & send to View Expenses Activity
+                Intent todoIntent = new Intent(FilterViewActivity.this, ViewExpensesActivity.class);
+                todoIntent.putExtra("url", urlToSend);
+                FilterViewActivity.this.startActivity(todoIntent);
+            }
+        });
+
+
 
         btnFilterFilter.setOnClickListener(new View.OnClickListener() {
             @Override

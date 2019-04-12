@@ -52,6 +52,8 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent todoIntent = new Intent(MainMenuActivity.this, BasicPieActivity.class);
+                String urlToSend = "This is the user-specific all expenses url";
+                todoIntent.putExtra("url", urlToSend);
                 MainMenuActivity.this.startActivity(todoIntent);
             }
         });
