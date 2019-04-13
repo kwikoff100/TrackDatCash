@@ -3,6 +3,7 @@ package com.example.trackdatcash;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,6 +17,7 @@ import java.util.List;
 
 public class FilterViewActivity extends AppCompatActivity {
 //private Spinner sprGroupAdd, sprMonthAdd, sprCategoriesAdd;
+    private static final String TAG = "FilterView";
     private Spinner sprPrimaryFilter, sprSecondaryFilter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +73,8 @@ public class FilterViewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String primary = sprPrimaryFilter.getSelectedItem().toString();
                 String secondary;
-                String baseURL = "http://largeproject-testing-app.herokuapp.com/expenses/";
+                String urlToSend = "";
+                String baseURL = "https://trackdatcash.herokuapp.com/expenses/";
                 if (!primary.equals("All"))
                 {
                     //Pull in the data from the selected drop down
@@ -80,26 +83,28 @@ public class FilterViewActivity extends AppCompatActivity {
                     if(sprPrimaryFilter.getSelectedItemPosition()==1)
                     {
                         //User choosing to filter by month
-                        baseURL.concat("monthMobile/");
-                        baseURL.concat(secondary);
-
+                        urlToSend = baseURL;
+                        urlToSend = urlToSend + "month/" + secondary;
+                        Log.e(TAG, urlToSend);
                     }
 
                     else
                     {
                         //User choosing to filter by category
-                        baseURL.concat("categoryMobile/");
-                        baseURL.concat(secondary);
+                        urlToSend = baseURL;
+                        urlToSend = urlToSend + "category/" + secondary;
+                        Log.e(TAG, urlToSend);
                     }
 
                 }
                 else
                 {
-
+                    //Send the string to send for all expenses
+                    urlToSend = "https://trackdatcash.herokuapp.com/expenses/getAllExpenses";
                 }
 
                 //Using data from spinners, create the URL to use
-                String urlToSend = "Blah" + "Group String";
+
 
                 //Using the selected value, create route & send to View Expenses Activity
                 Intent todoIntent = new Intent(FilterViewActivity.this, ViewExpensesActivity.class);

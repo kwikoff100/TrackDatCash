@@ -83,7 +83,7 @@
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:background="@color/colorPrimary"
-                android:text="Add Expense"
+                android:text="Filter"
                 android:fontFamily="@font/romansd"
                 app:layout_constraintEnd_toStartOf="@id/btnRtoVEfFE"
                 app:layout_constraintStart_toStartOf="parent"

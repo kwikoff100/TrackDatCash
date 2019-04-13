@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
@@ -18,6 +19,8 @@ public class ViewExpensesActivity extends AppCompatActivity {
     public static String longString;
     TableLayout tableLayout;
     ArrayList<expenseDataObject> expenseObjs;
+    private static String userID = "5ca6da956d073a0017df78f6";
+    private static String URL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,8 @@ public class ViewExpensesActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         String urlToUse = bundle.getString("url");
 
+
+
         if (urlToUse.equals("NoChange"))
         {
             //No change to the table
@@ -38,9 +43,10 @@ public class ViewExpensesActivity extends AppCompatActivity {
         else
         {
             //Call table create function upon activity create
-            initViews();
-        }
+            URL = urlToUse;
 
+        }
+        initViews();
 
         //Return to the Main Menu
         btnRtoMMfVE.setOnClickListener(new View.OnClickListener() {
@@ -71,19 +77,115 @@ public class ViewExpensesActivity extends AppCompatActivity {
 
 //Grab data here normally
         //Go transform the data from JSON to an array list
-        //fetchedDataToArray();
+        fetchedDataToArray();
 
         //For testing purposes
-        createTestData();
+        //createTestData();
 
         //Once array list is populated, create table
         addRows();
     }
 
-    /*
+    public void fetchedDataToArray()
+    {
+        String retVal = ReturnExpense.getAllExpenses(URL, userID);
+        if (retVal == null)
+        {
+            Log.e(TAG, "I hate you all");
+            createTestData();
+            return;
+        }
+        //Print to error log what the result was
+        //Log.e(TAG, longString);
+
+        expenseObjs = new ArrayList<>();
+
+        String longCopy = retVal;
+
+        //Formatting string for use and init of variables used
+        longCopy = longCopy.replaceAll("\"", "");
+        longCopy = longCopy.substring(1,longCopy.length()-2);
+        //Log.e(TAG, longCopy);
+        int nextComma, indexOfDesc, indexOfAmount, indexOfMonth, indexOfYear, indexOfDay, indexOfCategory;
+        int nextCurly = longCopy.indexOf("}");
+        int lastCurly = 0;
 
 
-     */
+        while(true)
+        {
+            //Find next curly, make sure we haven't gone too far
+            nextCurly = longCopy.indexOf("}", lastCurly+1);
+            if (nextCurly < 0)
+            {
+                nextCurly = longCopy.length()-1;
+            }
+            expenseDataObject test = new expenseDataObject();
+
+            //Find description after last end curly
+            indexOfDesc = longCopy.indexOf("description", lastCurly);
+            nextComma = longCopy.indexOf(",", indexOfDesc);
+            test.setDescription(longCopy.substring(indexOfDesc+12,nextComma));
+
+            //Find amount after last end curly
+            indexOfAmount = longCopy.indexOf("amount", lastCurly);
+            nextComma = longCopy.indexOf(",", indexOfAmount);
+            test.setAmount(longCopy.substring(indexOfAmount+7,nextComma));
+
+            //Find Category
+            indexOfCategory = longCopy.indexOf("category", lastCurly);
+            nextComma = longCopy.indexOf(",", indexOfCategory);
+            if (nextComma<nextCurly && nextComma>0)
+                test.setCategory(longCopy.substring(indexOfCategory+9,nextComma));
+            else
+                test.setCategory(longCopy.substring(indexOfCategory+9,nextCurly));
+
+
+            //Find month after last end curly
+            indexOfMonth = longCopy.indexOf("month", lastCurly);
+            nextComma = longCopy.indexOf(",", indexOfMonth);
+            //Log.e(TAG, longCopy.substring(indexOfMonth+6,nextComma));
+            if (nextComma<nextCurly && nextComma>0)
+                test.setMonth( longCopy.substring(indexOfMonth+6,nextComma) );
+            else
+                test.setMonth(longCopy.substring(indexOfMonth+6,nextCurly));
+
+            //Find day after last end curly
+            indexOfDay = longCopy.indexOf("day", lastCurly);
+            nextComma = longCopy.indexOf(",", indexOfDay);
+            if (indexOfDay>nextCurly || indexOfDay<0)
+            {
+                //Day was not included in this entry
+                test.setDay("");
+            }
+            else
+            {
+                test.setDay((nextComma < nextCurly) ? longCopy.substring(indexOfDay + 4, nextComma) :
+                        longCopy.substring(indexOfDay + 4, nextCurly));
+            }
+
+            //Find year after last end curly
+            indexOfYear = longCopy.indexOf("year", lastCurly);
+            nextComma = longCopy.indexOf(",", indexOfYear);
+            test.setYear((nextComma<nextCurly && nextComma>0) ? longCopy.substring(indexOfYear+5,nextComma) :
+                    longCopy.substring(indexOfYear+5,nextCurly));
+
+            //Add to arraylist
+            expenseObjs.add(test);
+
+            //See if we've gone too far
+            if (longCopy.indexOf("}", lastCurly+1) < 0)
+            {
+                break;
+            }
+
+            //Log.e(TAG, longCopy.substring(indexOfYear+5,nextComma));
+
+            //Get the next end curly
+            lastCurly = longCopy.indexOf("}", lastCurly+1);
+
+        }
+
+    }
     public void createTestData()
     {
         expenseObjs = new ArrayList<>();

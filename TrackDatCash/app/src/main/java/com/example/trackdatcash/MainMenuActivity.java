@@ -34,7 +34,7 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent todoIntent = new Intent(MainMenuActivity.this, ViewExpensesActivity.class);
-                String urlToSend = "This is the user-specific all expenses url";
+                String urlToSend = "https://trackdatcash.herokuapp.com/expenses/getAllExpenses";
                 todoIntent.putExtra("url", urlToSend);
                 MainMenuActivity.this.startActivity(todoIntent);
             }
@@ -43,8 +43,13 @@ public class MainMenuActivity extends AppCompatActivity {
         btnViewGExpenses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent todoIntent = new Intent(MainMenuActivity.this, GroupViewActivity.class);
+                //For the moment, this will be a testing activity to see precisely what everything will return
+                Intent todoIntent = new Intent(MainMenuActivity.this, TestingActivity.class);
                 MainMenuActivity.this.startActivity(todoIntent);
+
+
+                //Intent todoIntent = new Intent(MainMenuActivity.this, GroupViewActivity.class);
+                //MainMenuActivity.this.startActivity(todoIntent);
             }
         });
 

@@ -10,8 +10,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 //This is the main activity (ie, first activity on app startup)
 public class LoginActivity extends AppCompatActivity {
+
+    String success = "";
+    String token = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,20 +52,39 @@ public class LoginActivity extends AppCompatActivity {
                 EditText etUsername = (EditText) findViewById(R.id.etUsername);
                 EditText etPassword = (EditText) findViewById(R.id.etPassword);
 
-//Temporary success only for login button
-                //Login was successful
-                //Show Toast message
-                Toast toastLoginSuccess = Toast.makeText(context, textLoginSuccess, duration);
-                toastLoginSuccess.show();
-                //Send user to menu
-                Intent todoIntent = new Intent(LoginActivity.this, MainMenuActivity.class);
-                LoginActivity.this.startActivity(todoIntent);
-/*
-                //Login failed
-                //Show Toast message (leaving data fields as they are)
-                Toast toastLoginFail = Toast.makeText(context, textLoginFailed, duration);
-                toastLoginFail.show();
-*/
+                // Erik add information from edit text to send as json object
+                // using Randy's methods for login
+                String username = etUsername.getText().toString();
+                String password = etPassword.getText().toString();
+
+                String tryLogin = Authentication.login("https://trackdatcash.herokuapp.com/expenses/login", username, password);
+
+                try {
+                    JSONObject loginRet = new JSONObject(tryLogin);
+                    success = loginRet.get("success").toString();
+                    token = loginRet.get("token").toString();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                
+                if(tryLogin == "error")
+                {
+                    //Login failed
+                    //Show Toast message (leaving data fields as they are)
+                    Toast toastLoginFail = Toast.makeText(context, textLoginFailed, duration);
+                    toastLoginFail.show();
+                }
+                else
+                {
+                    //Temporary success only for login button
+                    //Login was successful
+                    //Show Toast message
+                    Toast toastLoginSuccess = Toast.makeText(context, textLoginSuccess, duration);
+                    toastLoginSuccess.show();
+                    //Send user to menu
+                    Intent todoIntent = new Intent(LoginActivity.this, MainMenuActivity.class);
+                    LoginActivity.this.startActivity(todoIntent);
+                }
             }
         });
 
