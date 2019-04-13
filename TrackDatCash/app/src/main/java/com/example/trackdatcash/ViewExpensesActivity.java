@@ -1,5 +1,6 @@
 package com.example.trackdatcash;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -11,15 +12,15 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class ViewExpensesActivity extends AppCompatActivity {
     private static final String TAG = "VPE";
-    public static String longString;
     TableLayout tableLayout;
     ArrayList<expenseDataObject> expenseObjs;
-    private static String userID = "5ca6da956d073a0017df78f6";
+    private String userID;
     private static String URL;
 
     @Override
@@ -33,7 +34,7 @@ public class ViewExpensesActivity extends AppCompatActivity {
         //Pull the url from the activity change intent
         Bundle bundle = getIntent().getExtras();
         String urlToUse = bundle.getString("url");
-
+        userID = LoginActivity.userIDused;
 
 
         if (urlToUse.equals("NoChange"))
@@ -104,6 +105,16 @@ public class ViewExpensesActivity extends AppCompatActivity {
 
         //Formatting string for use and init of variables used
         longCopy = longCopy.replaceAll("\"", "");
+        if (longCopy.length()<10)
+        {
+            //Exit, there's no data to use
+            Context context = getApplicationContext();
+            CharSequence textFailed = "No data";
+            final int duration = Toast.LENGTH_LONG;
+            Toast toastLoginFail = Toast.makeText(context, textFailed, duration);
+            toastLoginFail.show();
+            return;
+        }
         longCopy = longCopy.substring(1,longCopy.length()-2);
         //Log.e(TAG, longCopy);
         int nextComma, indexOfDesc, indexOfAmount, indexOfMonth, indexOfYear, indexOfDay, indexOfCategory;

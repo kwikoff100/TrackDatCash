@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,8 @@ public class LoginActivity extends AppCompatActivity {
 
     String success = "";
     String token = "";
+    public static String userIDused;
+    private static String TAG = "LoginActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,9 @@ public class LoginActivity extends AppCompatActivity {
                     JSONObject loginRet = new JSONObject(tryLogin);
                     success = loginRet.get("success").toString();
                     token = loginRet.get("token").toString();
+                    token = token.substring(7);
+                    userIDused = (Authentication.getUserId(token, "this-is-a-really-long-secret-key-yeehaw"));
+                    Log.e(TAG, userIDused);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -91,4 +97,5 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+
 }
