@@ -20,7 +20,7 @@ import java.util.List;
 
 public class AddExpenseActivity extends AppCompatActivity {
 
-    private Spinner sprGroupAdd, sprMonthAdd, sprCategoriesAdd;
+    private Spinner sprMonthAdd, sprCategoriesAdd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,6 @@ public class AddExpenseActivity extends AppCompatActivity {
 
         addToCategorySpinner();
         addToMonthSpinner();
-        addToGroupSpinner();
 
         //Automatically set the month, day and year to the current day
         Date date = new Date();
@@ -65,13 +64,19 @@ public class AddExpenseActivity extends AppCompatActivity {
                 //Take in all data fields
                 EditText etDescriptionAdd = (EditText) findViewById(R.id.etDescriptionAdd);
                 EditText etAmountAdd = (EditText) findViewById(R.id.etAmountAdd);
+                EditText etGroupAdd = (EditText) findViewById(R.id.etGroupAdd);
                 String decription = etDescriptionAdd.getText().toString();
                 String amount = etAmountAdd.getText().toString();
                 String month = sprMonthAdd.getSelectedItem().toString();
                 String day = etDayAdd.getText().toString();
                 String year = etYearAdd.getText().toString();
                 String category = sprCategoriesAdd.getSelectedItem().toString();
-                String group = sprGroupAdd.getSelectedItem().toString();
+                String group = etGroupAdd.getText().toString();
+
+                if (group.equals("") || group.toLowerCase().equals("none") || group.toLowerCase().equals("n/a"));
+                {
+                    group = "none";
+                }
 
                 if (decription.length()==0 || amount.length()==0 || day.length()==0 || year.length()==0)
                 {
@@ -117,20 +122,6 @@ public class AddExpenseActivity extends AppCompatActivity {
                 R.layout.spinner_item, monthList);
         dataAdapterM.setDropDownViewResource(R.layout.spinner_item);
         sprMonthAdd.setAdapter(dataAdapterM);
-    }
-
-    public void addToGroupSpinner() {
-        sprGroupAdd = (Spinner) findViewById(R.id.sprGroupAdd);
-        List<String> groupList = new ArrayList<String>();
-
-        groupList.add("None");
-
-        //Iterate through user's groups, and add them to List
-
-        ArrayAdapter<String> dataAdapterM = new ArrayAdapter<String>(this,
-                R.layout.spinner_item, groupList);
-        dataAdapterM.setDropDownViewResource(R.layout.spinner_item);
-        sprGroupAdd.setAdapter(dataAdapterM);
     }
 
     public void addToCategorySpinner() {
