@@ -41,7 +41,7 @@ public class FilterViewActivity extends AppCompatActivity {
                 {
                     addToSecondarySpinner(0);
                 }
-                else if (sprPrimaryFilter.getSelectedItemPosition()==2)
+                else if (sprPrimaryFilter.getSelectedItemPosition()==0)
                 {
                     addToSecondarySpinner(2);
                 }

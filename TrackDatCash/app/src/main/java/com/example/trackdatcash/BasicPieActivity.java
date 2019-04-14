@@ -1,5 +1,6 @@
 package com.example.trackdatcash;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -26,24 +27,24 @@ import java.util.ArrayList;
 public class BasicPieActivity extends AppCompatActivity {
 
     private static String TAG = "BasicPieActivity";
-    private int[] tempVals = {22, 33, 44, 55};
+    private double[] catTotals;
     private String[] catArray = {"Food", "Bills", "Entertainment", "Other/Misc."};
     PieChart pieChart;
+    private String userID;
+    private static String URL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_basic_pie);
-        Log.d(TAG, "OnCreate");
+        //Log.d(TAG, "OnCreate");
 
+        //Init activity clickables
         Button btnRtoMMfVP = (Button) findViewById(R.id.btnRtoMMfVP);
         Button btnFilterPie = (Button) findViewById(R.id.btnFilterPie);
-
         pieChart = (PieChart) findViewById(R.id.chPieChart);
 
-        //Add things to the pie chart
-        //pieChart.setDescription("Total spent per category");
-
+        //Add things to the pie chart, Start non-data related setup
         pieChart.setRotationEnabled(true);
         pieChart.setHoleRadius(30f);
         pieChart.setTransparentCircleAlpha(0);
@@ -51,47 +52,42 @@ public class BasicPieActivity extends AppCompatActivity {
         pieChart.setCenterTextSize(10);
         pieChart.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
         pieChart.getDescription().setText("Spending per Category");
-
-        //pieChart.setCenterTextTypeface(typeface);
         pieChart.setDrawEntryLabels(true);
 
         //Pull the url from the activity change intent
         Bundle bundle = getIntent().getExtras();
         String urlToUse = bundle.getString("url");
-
+        userID = LoginActivity.userIDused;
 
         if (urlToUse.equals("NoChange"))
         {
-            //No change to the table
+            //No change to the pie chart, redraw with previous URL
         }
         else
         {
-            //Create the pie chart with the new data
-            addDataSet(pieChart);
+            //Use the new URL to draw or redraw the pie chart
+            URL = urlToUse;
         }
 
+        //Go pull the data for the chart
+        addDataSet(pieChart);
 
-
+        //This listener allows the pie chart slices to be clickable, and a toast pops up
         pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
                 //Find the selected slice and output the found value to screen using Toast
-
-                //Log.e(TAG, e.toString());
-                //Log.e(TAG, h.toString());
                 int pos1 = h.toString().indexOf("x: ");
                 int pos2 = h.toString().indexOf(".",pos1);
                 String cat = h.toString().substring(pos1+3, pos2);
                 String catType = catArray[Integer.parseInt(cat)];
-                Integer val = tempVals[Integer.parseInt(cat)];
-
+                Integer val = (int)catTotals[Integer.parseInt(cat)];
                 Toast.makeText(BasicPieActivity.this, catType+"\nTotal $"+val.toString(),Toast.LENGTH_LONG).show();
-
             }
-
             @Override
-            public void onNothingSelected() {
-
+            public void onNothingSelected()
+            {
+                //Do nothing
             }
         });
 
@@ -104,7 +100,7 @@ public class BasicPieActivity extends AppCompatActivity {
             }
         });
 
-        //Go to the filter activity to choose what data goes in the pie chart
+        //Go to the filter activity to choose the time frame for the data in the chart
         btnFilterPie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,13 +111,17 @@ public class BasicPieActivity extends AppCompatActivity {
     }
 
     private void addDataSet(PieChart pieChart) {
+        //Call the function that will go pull the data using the URL given
+        fetchedDataToArray();
+
+        //Init the ArrayLists used in the data for the pie chart
         ArrayList<PieEntry> totals = new ArrayList<>();
         ArrayList<String> catNames = new ArrayList<>();
 
         //Add the values to the arrays used in data set
-        for (int i = 0; i<tempVals.length; i++)
+        for (int i = 0; i<catTotals.length; i++)
         {
-            totals.add(new PieEntry(tempVals[i], i));
+            totals.add(new PieEntry((int)catTotals[i], i));
             catNames.add(catArray[i]);
         }
 
@@ -131,7 +131,7 @@ public class BasicPieActivity extends AppCompatActivity {
         pieDataSet.setValueTextSize(12);
 
 
-        //Adding colors
+        //Adding colors for the pie chart
         ArrayList<Integer> colors = new ArrayList<>();
         colors.add(getResources().getColor(R.color.colorPie1));
         colors.add(getResources().getColor(R.color.colorPie2));
@@ -146,9 +146,10 @@ public class BasicPieActivity extends AppCompatActivity {
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         legend.setTextColor(getResources().getColor(R.color.colorPie5));
 
-        LegendEntry[] legendEntry = new LegendEntry[tempVals.length];
+        LegendEntry[] legendEntry = new LegendEntry[catTotals.length];
 
-        for (int i = 0; i<tempVals.length; i++)
+        //Iterate through legend entries to be added using the category names
+        for (int i = 0; i<catTotals.length; i++)
         {
             LegendEntry entry = new LegendEntry();
             entry.formColor = colors.get(i);
@@ -163,5 +164,87 @@ public class BasicPieActivity extends AppCompatActivity {
         pieChart.setData(pieData);
         pieChart.invalidate();
 
+    }
+
+    public void fetchedDataToArray()
+    {
+        String retVal = ReturnExpense.getAllExpenses(URL, userID);
+        if (retVal == null)
+        {
+            Log.e(TAG, "Pie chart data grab failed");
+            return;
+        }
+
+        //Init the totals array
+        catTotals = new double[4];
+
+        String longCopy = retVal;
+
+        //Formatting string for use and init of variables used
+        longCopy = longCopy.replaceAll("\"", "");
+
+        //Due to a filter or new registration, there is no data
+        if (longCopy.length()<10)
+        {
+            //Exit, there's no data to use
+            Context context = getApplicationContext();
+            CharSequence textFailed = "No data";
+            final int duration = Toast.LENGTH_LONG;
+            Toast toastLoginFail = Toast.makeText(context, textFailed, duration);
+            toastLoginFail.show();
+            return;
+        }
+
+        //Begin necessities for parsing
+        longCopy = longCopy.substring(1,longCopy.length()-2);
+        int nextComma, indexOfAmount, indexOfCategory;
+        int nextCurly = longCopy.indexOf("}");
+        int lastCurly = 0;
+        double currAmount;
+
+        //Begin to go through the returned string of data
+        while(true)
+        {
+            //Find next curly, make sure we haven't gone too far
+            nextCurly = longCopy.indexOf("}", lastCurly+1);
+            if (nextCurly < 0)
+            {
+                nextCurly = longCopy.length()-1;
+            }
+
+            //Find amount after last end curly
+            indexOfAmount = longCopy.indexOf("amount", lastCurly);
+            nextComma = longCopy.indexOf(",", indexOfAmount);
+            currAmount = Double.parseDouble(longCopy.substring(indexOfAmount+7,nextComma));
+
+            //Find Category
+            indexOfCategory = longCopy.indexOf("category", lastCurly);
+            nextComma = longCopy.indexOf(",", indexOfCategory);
+            String cat;
+            if (nextComma<nextCurly && nextComma>0)
+                cat = (longCopy.substring(indexOfCategory+9,nextComma));
+            else
+                cat = (longCopy.substring(indexOfCategory+9,nextCurly));
+
+            //Find the category, add to the current expense total of that category
+            for (int i = 0; i <4; i++)
+            {
+                if (cat.equals(catArray[i]))
+                {
+                    catTotals[i]+=currAmount;
+                }
+            }
+
+            //See if we've gone too far
+            if (longCopy.indexOf("}", lastCurly+1) < 0)
+            {
+                break;
+            }
+
+            //Log.e(TAG, longCopy.substring(indexOfYear+5,nextComma));
+
+            //Get the next end curly
+            lastCurly = longCopy.indexOf("}", lastCurly+1);
+        }
     }
 }
