@@ -8,8 +8,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class TestingActivity extends AppCompatActivity {
-
+    private String userID;
     public static TextView longtext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,12 +24,15 @@ public class TestingActivity extends AppCompatActivity {
         startGet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "https://trackdatcash.herokuapp.com/expenses/getAllExpenses";
-                String userId = "5ca6da956d073a0017df78f6";
+                String url = "https://trackdatcash.herokuapp.com/expenses/codeMount";
+                userID = LoginActivity.userIDused;
 
-                String retVal = ReturnExpense.getAllExpenses(url, userId);
+                String retVal = ReturnExpense.getUser(url, userID);
+                int indexOfGC = retVal.indexOf("groupCode");
+                int indexOfGCEnd = retVal.indexOf(",", indexOfGC);
+                String retValCopy = retVal.substring(indexOfGC+12, indexOfGCEnd-1);
 
-                longtext.setText(retVal);
+                longtext.setText(retValCopy);
             }
         });
 

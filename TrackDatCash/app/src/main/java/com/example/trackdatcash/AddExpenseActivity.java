@@ -94,8 +94,6 @@ public class AddExpenseActivity extends AppCompatActivity {
                 Intent todoIntent = new Intent(AddExpenseActivity.this, MainMenuActivity.class);
                 AddExpenseActivity.this.startActivity(todoIntent);
 
-
-
             }
         });
 

@@ -44,12 +44,12 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //For the moment, this will be a testing activity to see precisely what everything will return
-                Intent todoIntent = new Intent(MainMenuActivity.this, TestingActivity.class);
-                MainMenuActivity.this.startActivity(todoIntent);
-
-
-                //Intent todoIntent = new Intent(MainMenuActivity.this, GroupViewActivity.class);
+                //Intent todoIntent = new Intent(MainMenuActivity.this, TestingActivity.class);
                 //MainMenuActivity.this.startActivity(todoIntent);
+
+
+                Intent todoIntent = new Intent(MainMenuActivity.this, GroupViewActivity.class);
+                MainMenuActivity.this.startActivity(todoIntent);
             }
         });
 
