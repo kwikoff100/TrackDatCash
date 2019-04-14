@@ -38,16 +38,12 @@ public class ReturnExpense {
     // returns all expenses with groupcode
     // trackdatcash.herokuapp.com/code/:thisCode
     // Although thisCode will be in the parameters (Url), we will need to pass it as a String as groupCode
-    public static String returnAll(String url, String groupCode){
+    public static String returnAll(String groupCode){
+        String url = "https://trackdatcash.herokuapp.com/expenses/code/";
+        url = url + groupCode;
         JSONObject payload = new JSONObject();
         JSONArray test;
         String returnAll;
-        try{
-            payload.put("groupCode", groupCode);
-        }
-        catch(Exception ex){
-            return "error";
-        }
 
         try{
             test = JsonIoArr.doJsonIo(url, payload.toString());
